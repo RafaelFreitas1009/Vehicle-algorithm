@@ -1,1 +1,6 @@
 venv
+
+# Arquivos gerados automaticamente
+web/static/plots/*.png
+
+.vscode/settings.json
