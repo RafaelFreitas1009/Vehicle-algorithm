@@ -1,150 +1,237 @@
-# Forests of randomized trees
+# Coupon Analysis — Random Forest & Explainable ML
 
-Esse projeto é uma ferramenta interativa desenvolvida para o nosso seminário. Ele usa Machine Learning para prever se um motorista vai aceitar ou não um cupom de desconto baseado no contexto da viagem. A ideia foi criar um dashboard onde a gente consiga filtrar os dados e ver a IA "tomando a decisão" em tempo real.
+Este projeto é uma **aplicação web interativa de Machine Learning** desenvolvida com foco didático e de negócio.
+O sistema utiliza algoritmos de *Ensemble Learning* para prever se um motorista tende ou não a **aceitar um cupom de desconto**, considerando o contexto da viagem e características do usuário.
 
-## Instalação
+Além da modelagem preditiva, o projeto se destaca por oferecer:
 
-Para rodar esse projeto, você precisa ter o Python instalado. O gerenciador de pacotes pip vai instalar as dependencias:
-
-```bash
-  python3 -m venv venv
-```
-
-```bash
-  source venv/bin/activate
-```
-
-```bash
-  pip install -r dependences.txt
-```
-
-## Rodando localmente
-
-Clone o projeto
-
-```bash
-git clone https://github.com/MSCunha/Python-RandomForest.git
-```
-
-Entre no diretório do projeto
-
-```bash
-  cd Python-RandomForest
-```
-
-Certifique-se de que o arquivo in-vehicle-coupon-recommendation.csv está na mesma pasta e inicie o script:
-
-```bash
-python scikit.py
-```
-
-## Funcionalidades
-
-- **Query Dinâmica:** Filtros interativos para simular cenários de viagem e observar a decisão do modelo em tempo real.
-- **Fronteira de Decisão (2D):** Visualização bidimensional da separação dos dados realizada pelo Random Forest.
-- **Distribuição dos Dados (3D):** Gráfico tridimensional que evidencia regiões de sobreposição entre as classes.
-- **Probabilidade de Classificação:** Exibição da probabilidade de aceitação do cupom gerada pelo modelo.
-- **Log de Performance:** Monitoramento dos scores de Validação Cruzada e Grid Search durante a execução.
+- Visualizações claras e dinâmicas
+- Comparação entre modelos
+- Otimização automática
+- **Explicações inteligentes em linguagem de negócio**, eliminando a necessidade de interpretar métricas técnicas complexas
 
 ---
 
-## Documentação do Processo
+## 🧠 Visão Geral do Sistema
 
-Esta seção descreve as principais decisões técnicas adotadas no projeto, explicando **como cada etapa funciona** e  **por que ela foi utilizada** , com foco didático e manutenção futura.
+O fluxo da aplicação segue o modelo abaixo:
+
+1. **Pré-processamento dos dados**
+2. **Treinamento e avaliação de modelos**
+3. **Geração automática de gráficos**
+4. **Interpretação inteligente dos resultados**
+5. **Exibição via dashboard web**
+
+Tudo isso é executado sob demanda, a partir das escolhas feitas pelo usuário na interface.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- **Python 3**
+- **Flask** (backend web)
+- **Scikit-learn**
+- **Pandas / NumPy**
+- **Matplotlib / Seaborn**
+- **HTML + CSS + JavaScript**
+- **Arquitetura modular (MVC-like)**
+
+---
+
+## 📦 Estrutura do Projeto
+
+
+```
+PYTHON-RANDOMFOREST/
+│
+├── assets/
+│   └── in-vehicle-coupon-recommendation.csv
+│
+├── data/
+│   └── processor.py
+│
+├── models/
+│   ├── pycache/
+│   ├── coupon_model.py        # Treinamento, avaliação e otimização dos modelos
+│   ├── explainer.py           # Geração de explicações em linguagem de negócio
+│   ├── metrics.py             # Métricas de avaliação (accuracy, precision, recall, etc.)
+│   └── plots.py               # Geração dos gráficos salvos em arquivo
+│
+├── web/
+│   ├── static/
+│   │   ├── css/               # Estilos da interface
+│   │   ├── js/                # JavaScript (interações e experiência do usuário)
+│   │   └── plots/             # Gráficos gerados dinamicamente pelo backend
+│   │
+│   └── templates/
+│       ├── base.html          # Template base da aplicação
+│       └── index.html         # Página principal (dashboard)
+│
+├── app.py                     # Backend Flask (rotas e orquestração)
+├── main.py                    # Arquivo auxiliar de execução (opcional)
+├── requirements.txt           # Dependências do projeto
+├── LICENSE
+└── README.md
+```
+
+## ▶️ Executando o Projeto
+
+```
+python main.py
+```
+
+Em seguida, acesse no navegador:
+
+```
+http://localhost:5000
+```
+
+
+## 🎛️ Funcionalidades Principais
+
+### 🔹 Interface Web Interativa
+
+* Filtros dinâmicos (CoffeeHouse, Destination)
+* Seleção de eixos X, Y e Z
+* Execução sob demanda sem reiniciar o sistema
+
+### 🔹 Modelos de Machine Learning
+
+* **Random Forest Classifier**
+* **Extra Trees Classifier**
+* Comparação direta entre modelos
+* Opção de **Otimização de Hiperparâmetros (GridSearch)**
+
+### 🔹 Visualizações Geradas Automaticamente
+
+* Fronteira de decisão (2D)
+* Matriz de confusão
+* Importância das features
+* Distribuição de probabilidades
+* Distribuição 3D (opcional)
+* Comparação de desempenho entre modelos
+
+Os gráficos são gerados como arquivos e servidos diretamente pelo frontend.
+
+---
+
+## 🧠 Interpretação Inteligente dos Resultados
+
+Um dos diferenciais do projeto é o  **módulo de explicação automática** , localizado em:
+
+```
+models/explainer.py
+```
+
+Esse módulo converte métricas técnicas em  **texto compreensível para tomada de decisão** , explicando:
+
+* O que foi analisado
+* Como o modelo chegou à conclusão
+* Quais fatores mais influenciaram
+* O nível de confiabilidade
+* Impacto prático no negócio
+
+### 🔁 Comportamento Adaptativo
+
+Quando o usuário ativa a opção  **“Otimizar hiperparâmetros”** , o sistema:
+
+* Detecta automaticamente a otimização
+* Ajusta o texto explicativo
+* Informa se houve ganho real de performance ou estabilidade
+* Traduz o impacto técnico em linguagem estratégica
+
+---
+
+## 📊 Documentação Técnica do Processo
 
 ### 🔹 1. Pré-processamento — Label Encoding
 
-Antes do treinamento dos modelos, foi necessário tratar as variáveis categóricas do dataset, que contêm informações textuais como clima, destino e acompanhantes.
+Variáveis categóricas são convertidas para valores numéricos usando `LabelEncoder`.
 
-**Como funciona**
+**Por quê?**
 
-* Utiliza-se o `LabelEncoder` para converter textos em valores numéricos inteiros.
-* Cada categoria textual passa a ser representada por um número.
-
-**Por que foi utilizado**
-
-* Algoritmos de Machine Learning trabalham com dados numéricos.
-* Árvores de decisão precisam desses valores para realizar os critérios de divisão (splits) durante o treinamento.
+* Modelos baseados em árvores exigem dados numéricos
+* Permite splits eficientes durante o treinamento
 
 ---
 
 ### 🌳 2. Random Forest Classifier
 
-O Random Forest foi escolhido como o **modelo principal de classificação** do sistema.
+Modelo principal do sistema.
 
-**Como funciona**
+**Características**
 
-* É um método de *Ensemble Learning* baseado em múltiplas árvores de decisão.
-* O modelo utiliza 100 árvores independentes (`n_estimators = 100`).
-* A decisão final é tomada por **votação majoritária** entre as árvores.
-
-**Por que foi utilizado**
-
-* Reduz significativamente o risco de  *overfitting* .
-* Garante maior capacidade de generalização para novos dados.
-* É robusto para dados reais e ruidosos, como decisões humanas.
+* Ensemble de múltiplas árvores
+* Votação majoritária
+* Alta robustez a ruídos
+* Boa generalização
 
 ---
 
 ### 🌲 3. Extra Trees Classifier
 
-O **Extra Trees Classifier** foi utilizado como modelo alternativo de classificação, permitindo comparar seu desempenho com o Random Forest.
+Modelo alternativo para comparação.
 
-**Como funciona**
+**Diferencial**
 
-* Método de *Ensemble Learning* baseado em múltiplas árvores de decisão.
-* Introduz maior aleatoriedade na escolha dos *splits* em cada nó.
-
-**Por que foi utilizado**
-
-* Reduz o impacto de ruídos nos dados.
-* Facilita a comparação entre modelos e a análise da capacidade de generalização.
+* Maior aleatoriedade nos splits
+* Útil para avaliar estabilidade e variância
 
 ---
 
-### 🔁 4. Validação Cruzada (Cross-Validation)
+### 🔁 4. Validação Cruzada
 
-Para garantir que o desempenho do modelo seja confiável, foi aplicada a técnica de **K-Fold Cross-Validation** com `k = 5`.
+Utiliza  **K-Fold Cross-Validation (k=5)** .
 
-**Como funciona**
+**Benefícios**
 
-* O dataset é dividido em 5 partes.
-* Em cada iteração, 4 partes são usadas para treino e 1 para teste.
-* O processo se repete até que todas as partes sejam testadas.
-
-**Por que foi utilizada**
-
-* Evita resultados enviesados por uma única divisão de dados.
-* A média dos resultados indica a estabilidade real do modelo.
+* Reduz viés
+* Mede estabilidade real do modelo
 
 ---
 
-### ⚙️ 5. Grid Search — Tuning de Hiperparâmetros
+### ⚙️ 5. GridSearchCV — Otimização
 
-A otimização dos modelos é realizada automaticamente com o `GridSearchCV`.
+Busca automática pelos melhores hiperparâmetros.
 
-**Como funciona**
+**Impacto**
 
-* O sistema testa diferentes combinações de hiperparâmetros, como:
-  * profundidade das árvores
-  * número de estimadores
-* Avalia cada combinação usando validação cruzada.
+* Pode melhorar performance
+* Ou confirmar que o modelo base já está bem ajustado
+* Sempre explicado em linguagem de negócio no frontend
 
-**Por que foi utilizado**
+---
 
-* Garante que o modelo opere sempre com os melhores parâmetros possíveis.
-* Facilita a demonstração didática do impacto dos hiperparâmetros na performance.
-* Permite ajustes específicos para diferentes cenários simulados no dashboard.
+## 🎯 Objetivo Didático e Prático
 
-## Autor
+Este projeto foi construído para:
 
-- [@rafaelfreitas1009](https://github.com/rafaelfreitas1009)
+* Demonstrar Machine Learning de forma visual e compreensível
+* Conectar modelos estatísticos à tomada de decisão real
+* Eliminar a dependência de interpretação técnica por parte do usuário final
 
-## Licença
+---
 
-[MIT](https://choosealicense.com/licenses/mit/)
+## 👤 Autor
 
-## Referência
+* **Rafael Freitas**
+  * GitHub: [@rafaelfreitas1009](https://github.com/rafaelfreitas1009)
 
-- [Dataset: In-Vehicle Coupon Recommendation](https://archive.ics.uci.edu/dataset/603/in+vehicle+coupon+recommendation)
-- [Scikit-Learn Documentation](https://scikit-learn.org/stable/user_guide.html)
+---
+
+## 📄 Licença
+
+MIT License
+
+[https://choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/)
+
+---
+
+## 📚 Referências
+
+* Dataset: In-Vehicle Coupon Recommendation
+
+  [https://archive.ics.uci.edu/dataset/603/in+vehicle+coupon+recommendation](https://archive.ics.uci.edu/dataset/603/in+vehicle+coupon+recommendation)
+* Scikit-learn Documentation
+
+  [https://scikit-learn.org/stable/user_guide.html](https://scikit-learn.org/stable/user_guide.html)

@@ -16,23 +16,38 @@ def generate_business_explanation(results: dict) -> dict:
     meta = results["meta"]
     rf = results["rf"]
     et = results["et"]
+    optimized = results.get("optimized")
 
+    # -------------------------
+    # MÉTRICAS BÁSICAS
+    # -------------------------
     n = meta["n_samples"]
     acc_rf = rf["test_accuracy"]
     acc_et = et["test_accuracy"]
+    acc_opt = optimized["test_accuracy"] if optimized else None
 
-    # distribuição real
+    # -------------------------
+    # DISTRIBUIÇÃO REAL (MATRIZ DE CONFUSÃO)
+    # -------------------------
     cm = rf["confusion_matrix"]
+
     total_accept = cm[1][0] + cm[1][1]
     total_reject = cm[0][0] + cm[0][1]
 
     pct_accept = total_accept / (total_accept + total_reject)
     pct_reject = 1 - pct_accept
 
-    # feature importance
+    # -------------------------
+    # FEATURE IMPORTANCE
+    # -------------------------
     importances = rf["feature_importance"]
     axes = [meta["x_axis"], meta["y_axis"]]
-    ranked = sorted(zip(axes, importances), key=lambda x: x[1], reverse=True)
+
+    ranked = sorted(
+        zip(axes, importances),
+        key=lambda x: x[1],
+        reverse=True
+    )
 
     main_feature, main_weight = ranked[0]
     second_feature, second_weight = ranked[1]
@@ -41,8 +56,8 @@ def generate_business_explanation(results: dict) -> dict:
     # TEXTO 1 — RESUMO EXECUTIVO
     # -------------------------
     summary = (
-        f"Nesta análise, o sistema avaliou {format_int_ptbr(n)} situações reais de oferta de cupons. "
-        f"Com base nos padrões identificados, aproximadamente "
+        f"Nesta análise, o sistema avaliou {format_int_ptbr(n)} situações reais "
+        f"de oferta de cupons. Com base nos padrões identificados, aproximadamente "
         f"{pct_accept:.0%} dos cupons tendem a ser aceitos, enquanto "
         f"{pct_reject:.0%} apresentam maior chance de rejeição. "
         "Isso indica um cenário de aceitação moderada, com potencial de otimização."
@@ -70,25 +85,58 @@ def generate_business_explanation(results: dict) -> dict:
     )
 
     # -------------------------
-    # TEXTO 4 — CONFIABILIDADE
+    # TEXTO 4 — CONFIABILIDADE / OTIMIZAÇÃO
     # -------------------------
-    confidence = (
-        f"O desempenho do sistema foi consistente, com taxa de acerto próxima de "
-        f"{acc_rf:.0%}. Isso significa que, na maioria dos casos, "
-        "as decisões tomadas pelo sistema refletem corretamente "
-        "o comportamento observado nos dados históricos."
-    )
+    if optimized:
+        delta = acc_opt - acc_rf
+
+        if delta > 0:
+            confidence = (
+                "O sistema passou por um processo de otimização automática de "
+                "hiperparâmetros, no qual diferentes configurações internas do modelo "
+                "foram testadas. Esse processo resultou em melhora no desempenho, "
+                f"elevando a taxa de acerto de {acc_rf:.0%} para {acc_opt:.0%}. "
+                "Isso indica uma capacidade maior de prever corretamente "
+                "a aceitação dos cupons."
+            )
+        else:
+            confidence = (
+                "O sistema passou por um processo de otimização automática de "
+                "hiperparâmetros. No entanto, o desempenho permaneceu estável, "
+                f"com taxa de acerto próxima de {acc_rf:.0%}. "
+                "Isso indica que o modelo original já estava bem ajustado "
+                "ao padrão atual dos dados."
+            )
+    else:
+        confidence = (
+            f"O desempenho do sistema foi consistente, com taxa de acerto próxima de "
+            f"{acc_rf:.0%}. Isso significa que, na maioria dos casos, "
+            "as decisões tomadas pelo sistema refletem corretamente "
+            "o comportamento observado nos dados históricos."
+        )
 
     # -------------------------
     # TEXTO 5 — CONCLUSÃO DE NEGÓCIO
     # -------------------------
-    conclusion = (
-        "Na prática, isso indica que o sistema pode ser utilizado como apoio "
-        "na tomada de decisão para ofertas de cupons, ajudando a reduzir desperdícios "
-        "e aumentar a taxa de aceitação. Ajustes nos filtros ou no público-alvo "
-        "podem elevar ainda mais os resultados obtidos."
-    )
+    if optimized:
+        conclusion = (
+            "Com a otimização ativada, o sistema demonstra maior maturidade analítica, "
+            "avaliando automaticamente diferentes estratégias para maximizar resultados. "
+            "Na prática, isso reforça o uso do modelo como apoio estratégico "
+            "na tomada de decisão, especialmente em cenários onde pequenas melhorias "
+            "de desempenho geram impacto financeiro relevante."
+        )
+    else:
+        conclusion = (
+            "Na prática, isso indica que o sistema pode ser utilizado como apoio "
+            "na tomada de decisão para ofertas de cupons, ajudando a reduzir desperdícios "
+            "e aumentar a taxa de aceitação. Ajustes nos filtros ou no público-alvo "
+            "podem elevar ainda mais os resultados obtidos."
+        )
 
+    # -------------------------
+    # RETORNO FINAL
+    # -------------------------
     return {
         "summary": summary,
         "model_logic": model_logic,
