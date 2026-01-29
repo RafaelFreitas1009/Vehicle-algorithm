@@ -1,0 +1,17 @@
+# Core
+numpy
+pandas
+
+# Machine Learning
+scikit-learn
+
+# Visualização
+matplotlib
+seaborn
+
+# Web
+flask
+
+# Notebooks (opcional, mas recomendado)
+jupyter
+ipykernel

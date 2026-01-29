@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- =========================
+     SIDEBAR (CONFIGURAÇÕES)
+     ========================= -->
+<div class="sidebar">
+  <h2>Configurações</h2>
+
+  <form method="post" action="/run">
+
+    <label>CoffeeHouse</label>
+    <select name="coffee">
+      <option>Qualquer</option>
+      {% for v in options.CoffeeHouse %}
+        <option>{{ v }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Destination</label>
+    <select name="dest">
+      <option>Qualquer</option>
+      {% for v in options.destination %}
+        <option>{{ v }}</option>
+      {% endfor %}
+    </select>
+
+    <hr/>
+
+    <label>Eixo X</label>
+    <select name="x_axis">
+      {% for v in options.axes %}
+        <option {% if v == "temperature" %}selected{% endif %}>
+          {{ v }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label>Eixo Y</label>
+    <select name="y_axis">
+      {% for v in options.axes %}
+        <option {% if v == "age" %}selected{% endif %}>
+          {{ v }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label>Eixo Z</label>
+    <select name="z_axis">
+      <option>Qualquer</option>
+      {% for v in options.axes %}
+        <option {% if v == "income" %}selected{% endif %}>
+          {{ v }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label style="margin-top: 10px;">
+      <input type="checkbox" name="optimize">
+      Otimizar hiperparâmetros (GridSearch)
+    </label>
+
+    <button class="btn-run" type="submit">
+      EXECUTAR ANÁLISE
+    </button>
+
+  </form>
+</div>
+
+<!-- =========================
+     CONTEÚDO PRINCIPAL
+     ========================= -->
+<div class="main-content">
+  <h1>Coupon Analysis (Web)</h1>
+
+  {% if last.results %}
+
+    <!-- ===== RESULTADOS NUMÉRICOS ===== -->
+    <div class="results">
+      <p><strong>Amostras:</strong> {{ last.results.meta.n_samples }}</p>
+      <p><strong>RF Test Accuracy:</strong> {{ "%.4f"|format(last.results.rf.test_accuracy) }}</p>
+      <p><strong>ET Test Accuracy:</strong> {{ "%.4f"|format(last.results.et.test_accuracy) }}</p>
+
+      {% if last.results.optimized %}
+        <p>
+          <strong>RF Otimizado Test Accuracy:</strong>
+          {{ "%.4f"|format(last.results.optimized.test_accuracy) }}
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- ===== AJUSTES AUTOMÁTICOS ===== -->
+    {% if last.messages and last.messages|length > 0 %}
+      <div class="alert">
+        <strong>Ajustes automáticos:</strong>
+        <ul>
+          {% for m in last.messages %}
+            <li>{{ m }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+
+    {% if last.explanation %}
+
+    <div class="assistant-wrapper">
+
+      <div class="assistant-header">
+        🧠 Interpretação Inteligente dos Resultados
+      </div>
+
+      <div class="assistant-content">
+
+        <div class="assistant-section">
+          <h4>Resumo Geral</h4>
+          <p>{{ last.explanation.summary }}</p>
+        </div>
+
+        <div class="assistant-section">
+          <h4>Como o sistema chegou a essa conclusão</h4>
+          <p>{{ last.explanation.model_logic }}</p>
+        </div>
+
+        <div class="assistant-section">
+          <h4>Fatores mais relevantes</h4>
+          <p>{{ last.explanation.key_factors }}</p>
+        </div>
+
+        <div class="assistant-section">
+          <h4>Confiabilidade da análise</h4>
+          <p>{{ last.explanation.confidence }}</p>
+        </div>
+
+        <div class="assistant-section conclusion">
+          <h4>Conclusão prática</h4>
+          <p>{{ last.explanation.conclusion }}</p>
+        </div>
+
+      </div>
+    </div>
+
+{% endif %}
+
+
+    
+
+    <!-- ===== DASHBOARD ===== -->
+    <h2>Dashboard</h2>
+
+    <div class="dashboard-grid">
+
+      <div class="card">
+        <h4>Decision Boundary (Random Forest)</h4>
+        <img src="{{ url_for('static', filename='plots/decision_boundary.png') }}">
+      </div>
+
+      <div class="card">
+        <h4>Matriz de Confusão</h4>
+        <img src="{{ url_for('static', filename='plots/confusion_rf.png') }}">
+      </div>
+
+      <div class="card">
+        <h4>Importância das Features</h4>
+        <img src="{{ url_for('static', filename='plots/feature_importance.png') }}">
+      </div>
+
+      <div class="card">
+        <h4>Distribuição de Probabilidades</h4>
+        <img src="{{ url_for('static', filename='plots/probability_distribution.png') }}">
+      </div>
+
+      {% if last.results.optimized %}
+        <div class="card">
+          <h4>Comparação de Modelos</h4>
+          <img src="{{ url_for('static', filename='plots/model_comparison.png') }}">
+        </div>
+      {% endif %}
+
+      {% if last.results.meta.z_axis != "Qualquer" %}
+        <div class="card">
+          <h4>Distribuição 3D</h4>
+          <img src="{{ url_for('static', filename='plots/distribution_3d.png') }}">
+        </div>
+      {% endif %}
+
+    </div>
+  {% endif %}
+
+  <div class="footer-note">
+  Análise Avançada de Cupom de Veículo
+  </div>
+</div>
+
+{% endblock %}
